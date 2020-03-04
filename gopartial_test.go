@@ -1134,6 +1134,21 @@ func TestPartialUpdate(t *testing.T) {
 			want:    []string{},
 			wantErr: false,
 		},
+		test{
+			name: "Update field using field name",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"Field1": "1",
+					"Field5": 1,
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {

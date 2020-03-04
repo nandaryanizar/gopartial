@@ -14,6 +14,7 @@ var errDestinationMustBePointerType = errors.New("Destination must be pointer to
 // This function can extended through updaters. A list of function that accepts
 // destination Value and the to be assigned Value and return true if updates is successful
 // Returns list of struct field names that was successfully updated.
+// If tagName is not provided, the default lookup value would be the field's name.
 func PartialUpdate(dest interface{}, partial map[string]interface{}, tagName string, skipConditions []func(reflect.StructField) bool, updaters []func(reflect.Value, reflect.Value) bool) ([]string, error) {
 	valueOfDest := reflect.ValueOf(dest)
 	// Must be a pointer to a struct so that it can be updated
@@ -52,8 +53,13 @@ func PartialUpdate(dest interface{}, partial map[string]interface{}, tagName str
 			continue
 		}
 
+		fieldName := field.Name
+		if tagName != "" {
+			fieldName = field.Tag.Get(tagName)
+		}
+
 		// get the partial value based on the tagName
-		if val, ok := partial[field.Tag.Get(tagName)]; ok {
+		if val, ok := partial[fieldName]; ok {
 			v := reflect.ValueOf(val)
 			updateSuccess := false
 
