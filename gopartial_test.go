@@ -103,7 +103,7 @@ func TestPartialUpdate(t *testing.T) {
 
 		// string
 		test{
-			name: "Update field1 (string) with strinng",
+			name: "Update field1 (string) with string",
 			args: args{
 				dest: &destination{},
 				partial: map[string]interface{}{
@@ -127,8 +127,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// null.String
@@ -171,8 +171,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// float64
@@ -285,8 +285,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// *float64
@@ -413,8 +413,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// null.Float
@@ -541,8 +541,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// int
@@ -655,8 +655,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// *int
@@ -783,8 +783,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// null.Int
@@ -911,8 +911,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// bool
@@ -941,8 +941,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 		test{
 			name: "Update field7 (bool) with int",
@@ -955,8 +955,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// *bool
@@ -999,8 +999,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// time.Time
@@ -1029,8 +1029,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 		test{
 			name: "Update field9 (time.Time) with int",
@@ -1043,8 +1043,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// *time.Time
@@ -1087,8 +1087,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 
 		// null.Time
@@ -1131,8 +1131,8 @@ func TestPartialUpdate(t *testing.T) {
 				updaters:       Updaters,
 				skipConditions: SkipConditions,
 			},
-			want:    []string{},
-			wantErr: false,
+			want:    nil,
+			wantErr: true,
 		},
 		test{
 			name: "Update field using field name",

@@ -2,7 +2,7 @@ package gopartial
 
 import (
 	"errors"
-	"log"
+	"fmt"
 	"reflect"
 )
 
@@ -82,9 +82,11 @@ func PartialUpdate(dest interface{}, partial map[string]interface{}, tagName str
 				fieldsUpdated = append(fieldsUpdated, field.Name)
 			} else {
 				if !v.IsValid() {
-					log.Printf("%v.%v cannot be assigned with value null", typeOfDest.Name(), field.Name)
+					errMsg := fmt.Sprintf("%v.%v cannot be assigned with value null", typeOfDest.Name(), field.Name)
+					return nil, errors.New(errMsg)
 				} else {
-					log.Printf("%v.%v cannot be assigned with value %v", typeOfDest.Name(), field.Name, v.Interface())
+					errMsg := fmt.Sprintf("%v.%v cannot be assigned with value %v", typeOfDest.Name(), field.Name, v.Interface())
+					return nil, errors.New(errMsg)
 				}
 			}
 		}
