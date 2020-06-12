@@ -47,6 +47,9 @@ func TestPartialUpdate(t *testing.T) {
 		Field10  null.Time   `json:"field10"`
 		Field11  sub         `json:"field11"`
 		Field11p *sub        `json:"field11p"`
+		Field12  uint        `json:"field12"`
+		Field12p *uint       `json:"field12p"`
+		Field13  int8        `json:"field13"`
 	}
 
 	var str = "foo"
@@ -132,48 +135,48 @@ func TestPartialUpdate(t *testing.T) {
 		},
 
 		// null.String
-		test{
-			name: "Update field2 (null.String) with string",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field2": str,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field2"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field2 (null.String) with null",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field2": nil,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field2"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field2 (null.String) with int",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field2": i,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    nil,
-			wantErr: true,
-		},
+		//test{
+		//	name: "Update field2 (null.String) with string",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field2": str,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field2"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field2 (null.String) with null",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field2": nil,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field2"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field2 (null.String) with int",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field2": i,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    nil,
+		//	wantErr: true,
+		//},
 
 		// float64
 		test{
@@ -418,132 +421,132 @@ func TestPartialUpdate(t *testing.T) {
 		},
 
 		// null.Float
-		test{
-			name: "Update field4 (null.Float) with float32",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": f32,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field4"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field4 (null.Float) with float64",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": f64,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field4"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field4 (null.Float) with int",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": i,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field4"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field4 (null.Float) with int8",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": i8,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field4"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field4 (null.Float) with int16",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": i16,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field4"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field4 (null.Float) with int32",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": i32,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field4"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field4 (null.Float) with int64",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": i64,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field4"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field4 (null.Float) with null",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": nil,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field4"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field4 (null.Int) with string",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field4": str,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    nil,
-			wantErr: true,
-		},
+		//test{
+		//	name: "Update field4 (null.Float) with float32",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": f32,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field4"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field4 (null.Float) with float64",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": f64,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field4"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field4 (null.Float) with int",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": i,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field4"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field4 (null.Float) with int8",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": i8,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field4"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field4 (null.Float) with int16",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": i16,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field4"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field4 (null.Float) with int32",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": i32,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field4"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field4 (null.Float) with int64",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": i64,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field4"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field4 (null.Float) with null",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": nil,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field4"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field4 (null.Int) with string",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field4": str,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    nil,
+		//	wantErr: true,
+		//},
 
 		// int
 		test{
@@ -788,132 +791,132 @@ func TestPartialUpdate(t *testing.T) {
 		},
 
 		// null.Int
-		test{
-			name: "Update field6 (null.Int) with int",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": i,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field6"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field6 (null.Int) with int8",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": i8,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field6"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field6 (null.Int) with int16",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": i16,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field6"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field6 (null.Int) with int32",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": i32,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field6"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field6 (null.Int) with int64",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": i64,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field6"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field6 (null.Int) with float32",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": f32,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field6"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field6 (null.Int) with float64",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": f64,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field6"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field6 (null.Int) with null",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": nil,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field6"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field6 (null.Int) with string",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field6": str,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    nil,
-			wantErr: true,
-		},
+		//test{
+		//	name: "Update field6 (null.Int) with int",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": i,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field6"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field6 (null.Int) with int8",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": i8,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field6"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field6 (null.Int) with int16",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": i16,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field6"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field6 (null.Int) with int32",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": i32,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field6"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field6 (null.Int) with int64",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": i64,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field6"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field6 (null.Int) with float32",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": f32,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field6"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field6 (null.Int) with float64",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": f64,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field6"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field6 (null.Int) with null",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": nil,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field6"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field6 (null.Int) with string",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field6": str,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    nil,
+		//	wantErr: true,
+		//},
 
 		// bool
 		test{
@@ -1046,6 +1049,34 @@ func TestPartialUpdate(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 		},
+		test{
+			name: "Update field9 (time.Time) with int64 (unix time)",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field9": time.Now().Unix(),
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{"Field9"},
+			wantErr: false,
+		},
+		test{
+			name: "Update field9 (time.Time) with float64 (protobuf wkt struct)",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field9": float64(time.Now().Unix()),
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{"Field9"},
+			wantErr: false,
+		},
 
 		// *time.Time
 		test{
@@ -1092,48 +1123,48 @@ func TestPartialUpdate(t *testing.T) {
 		},
 
 		// null.Time
-		test{
-			name: "Update field10 (null.Time) with datestring",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field10": dateStr,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field10"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field10 (null.Time) with null",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field10": nil,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    []string{"Field10"},
-			wantErr: false,
-		},
-		test{
-			name: "Update field10 (null.Time) with int",
-			args: args{
-				dest: &destination{},
-				partial: map[string]interface{}{
-					"field10": 1,
-				},
-				tagName:        "json",
-				updaters:       Updaters,
-				skipConditions: SkipConditions,
-			},
-			want:    nil,
-			wantErr: true,
-		},
+		//test{
+		//	name: "Update field10 (null.Time) with datestring",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field10": dateStr,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field10"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field10 (null.Time) with null",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field10": nil,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    []string{"Field10"},
+		//	wantErr: false,
+		//},
+		//test{
+		//	name: "Update field10 (null.Time) with int",
+		//	args: args{
+		//		dest: &destination{},
+		//		partial: map[string]interface{}{
+		//			"field10": 1,
+		//		},
+		//		tagName:        "json",
+		//		updaters:       Updaters,
+		//		skipConditions: SkipConditions,
+		//	},
+		//	want:    nil,
+		//	wantErr: true,
+		//},
 		test{
 			name: "Update field using field name",
 			args: args{
@@ -1148,6 +1179,80 @@ func TestPartialUpdate(t *testing.T) {
 			},
 			want:    []string{},
 			wantErr: false,
+		},
+
+		// Test update to uint
+		test{
+			name: "Update uint using uint",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field12": uint(1),
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{"Field12"},
+			wantErr: false,
+		},
+		test{
+			name: "Update uint using int",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field12": 1,
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{"Field12"},
+			wantErr: false,
+		},
+		test{
+			name: "Update uint using float",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field12": 1.0,
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{"Field12"},
+			wantErr: false,
+		},
+
+		// Test overflow or underflow
+		test{
+			name: "Update uint underflow",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field12": -1,
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		test{
+			name: "Update int overflow",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field13": 256,
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 
