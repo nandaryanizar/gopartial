@@ -805,7 +805,22 @@ func isOverflowFloat(field interface{}, value float64) bool {
 	return reflect.ValueOf(field).OverflowFloat(value)
 }
 
-// Updaters collection of all type updaters
+// AllUpdaters is a collection of all type updaters
+var AllUpdaters = []func(reflect.Value, reflect.Value) bool{
+	NullStringUpdater,
+	NullFloatUpdater,
+	NullIntUpdater,
+	NullBoolUpdater,
+	NullTimeUpdater,
+	MapStringInterfaceUpdater,
+	IntUpdater,
+	UintUpdater,
+	FloatUpdater,
+	TimeUpdater,
+	BoolUpdater,
+}
+
+// Updaters is a collection of standard type updaters
 var Updaters = []func(reflect.Value, reflect.Value) bool{
 	IntUpdater,
 	UintUpdater,
