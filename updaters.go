@@ -116,7 +116,7 @@ func NullTimeUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 	case null.Time:
 		// if its null value
 		if !v.IsValid() {
-			newValue := reflect.ValueOf(null.Time{Valid: false})
+			newValue := reflect.ValueOf(null.Time{})
 			fieldValue.Set(newValue)
 			return true
 		}
@@ -172,119 +172,442 @@ func BoolUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 
 // IntUpdater update int (any int type Int8, Int16, Int32, Int64 and whether its a pointer or a value)
 func IntUpdater(fieldValue reflect.Value, v reflect.Value) bool {
-	if fieldValue.Kind() == reflect.Int ||
-		fieldValue.Kind() == reflect.Int8 ||
-		fieldValue.Kind() == reflect.Int16 ||
-		fieldValue.Kind() == reflect.Int32 ||
-		fieldValue.Kind() == reflect.Int64 {
+	switch fieldValue.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
 
-		if v.Kind() == reflect.Int ||
-			v.Kind() == reflect.Int8 ||
-			v.Kind() == reflect.Int16 ||
-			v.Kind() == reflect.Int32 ||
-			v.Kind() == reflect.Int64 {
+		switch v.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			if fieldValue.OverflowInt(v.Int()) {
+				return false
+			}
 			fieldValue.SetInt(v.Int())
 			return true
-		} else if v.Kind() == reflect.Float32 ||
-			v.Kind() == reflect.Float64 {
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			if fieldValue.OverflowInt(int64(v.Uint())) {
+				return false
+			}
+			fieldValue.SetInt(int64(v.Uint()))
+			return true
+		case reflect.Float32, reflect.Float64:
+			if fieldValue.OverflowInt(int64(v.Float())) {
+				return false
+			}
 			fieldValue.SetInt(int64(v.Float()))
 			return true
 		}
-	} else if fieldValue.Kind() == reflect.Ptr {
-		// only process if field is pointer to any int
-		if fieldValue.Type().String() == "*int" ||
-			fieldValue.Type().String() == "*int8" ||
-			fieldValue.Type().String() == "*int16" ||
-			fieldValue.Type().String() == "*int32" ||
-			fieldValue.Type().String() == "*int64" {
-			if !v.IsValid() {
+
+	case reflect.Ptr:
+
+		if !v.IsValid() {
+			if fieldValue.Type().String() == "*int" {
+				var newNullInt *int
+				newValue := reflect.ValueOf(newNullInt)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*int8" {
+				var newNullInt8 *int8
+				newValue := reflect.ValueOf(newNullInt8)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*int16" {
+				var newNullInt16 *int16
+				newValue := reflect.ValueOf(newNullInt16)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*int32" {
+				var newNullInt32 *int32
+				newValue := reflect.ValueOf(newNullInt32)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*int64" {
+				var newNullInt64 *int64
+				newValue := reflect.ValueOf(newNullInt64)
+				fieldValue.Set(newValue)
+				return true
+			}
+		} else {
+
+			switch v.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				vv := v.Int()
+
 				if fieldValue.Type().String() == "*int" {
-					var newNullInt *int
-					newValue := reflect.ValueOf(newNullInt)
-					fieldValue.Set(newValue)
-					return true
-				} else if fieldValue.Type().String() == "*int8" {
-					var newNullInt8 *int8
-					newValue := reflect.ValueOf(newNullInt8)
-					fieldValue.Set(newValue)
-					return true
-				} else if fieldValue.Type().String() == "*int16" {
-					var newNullInt16 *int16
-					newValue := reflect.ValueOf(newNullInt16)
-					fieldValue.Set(newValue)
-					return true
-				} else if fieldValue.Type().String() == "*int32" {
-					var newNullInt32 *int32
-					newValue := reflect.ValueOf(newNullInt32)
-					fieldValue.Set(newValue)
-					return true
-				} else if fieldValue.Type().String() == "*int64" {
-					var newNullInt64 *int64
-					newValue := reflect.ValueOf(newNullInt64)
-					fieldValue.Set(newValue)
-					return true
-				}
-			} else if v.Kind() == reflect.Int ||
-				v.Kind() == reflect.Int8 ||
-				v.Kind() == reflect.Int16 ||
-				v.Kind() == reflect.Int32 ||
-				v.Kind() == reflect.Int64 {
-				if fieldValue.Type().String() == "*int" {
-					newIntValue := int(v.Int())
+					var newIntValue int
+					if isOverflowInt(newIntValue, vv) {
+						return false
+					}
+					newIntValue = int(vv)
 					newValue := reflect.ValueOf(&newIntValue)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*int8" {
-					newInt8Value := int8(v.Int())
+					var newInt8Value int8
+					if isOverflowInt(newInt8Value, vv) {
+						return false
+					}
+					newInt8Value = int8(vv)
 					newValue := reflect.ValueOf(&newInt8Value)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*int16" {
-					newInt16Value := int16(v.Int())
+					var newInt16Value int16
+					if isOverflowInt(newInt16Value, vv) {
+						return false
+					}
+					newInt16Value = int16(vv)
 					newValue := reflect.ValueOf(&newInt16Value)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*int32" {
-					newInt32Value := int32(v.Int())
+					var newInt32Value int32
+					if isOverflowInt(newInt32Value, vv) {
+						return false
+					}
+					newInt32Value = int32(vv)
 					newValue := reflect.ValueOf(&newInt32Value)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*int64" {
-					newInt64Value := v.Int()
+					var newInt64Value int64
+					if isOverflowInt(newInt64Value, vv) {
+						return false
+					}
+					newInt64Value = vv
 					newValue := reflect.ValueOf(&newInt64Value)
 					fieldValue.Set(newValue)
 					return true
 				}
-			} else if v.Kind() == reflect.Float32 ||
-				v.Kind() == reflect.Float64 {
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				vv := v.Uint()
+
 				if fieldValue.Type().String() == "*int" {
-					newIntValue := int(v.Float())
+					var newIntValue int
+					if isOverflowInt(newIntValue, int64(vv)) {
+						return false
+					}
+					newIntValue = int(vv)
 					newValue := reflect.ValueOf(&newIntValue)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*int8" {
-					newInt8Value := int8(v.Float())
+					var newInt8Value int8
+					if isOverflowInt(newInt8Value, int64(vv)) {
+						return false
+					}
+					newInt8Value = int8(vv)
 					newValue := reflect.ValueOf(&newInt8Value)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*int16" {
-					newInt16Value := int16(v.Float())
+					var newInt16Value int16
+					if isOverflowInt(newInt16Value, int64(vv)) {
+						return false
+					}
+					newInt16Value = int16(vv)
 					newValue := reflect.ValueOf(&newInt16Value)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*int32" {
-					newInt32Value := int32(v.Float())
+					var newInt32Value int32
+					if isOverflowInt(newInt32Value, int64(vv)) {
+						return false
+					}
+					newInt32Value = int32(vv)
 					newValue := reflect.ValueOf(&newInt32Value)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*int64" {
-					newInt64Value := int64(v.Float())
+					var newInt64Value int64
+					if isOverflowInt(newInt64Value, int64(vv)) {
+						return false
+					}
+					newInt64Value = int64(vv)
+					newValue := reflect.ValueOf(&newInt64Value)
+					fieldValue.Set(newValue)
+					return true
+				}
+			case reflect.Float32, reflect.Float64:
+				vv := v.Float()
+
+				if fieldValue.Type().String() == "*int" {
+					var newIntValue int
+					if isOverflowInt(newIntValue, int64(vv)) {
+						return false
+					}
+					newIntValue = int(vv)
+					newValue := reflect.ValueOf(&newIntValue)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*int8" {
+					var newInt8Value int8
+					if isOverflowInt(newInt8Value, int64(vv)) {
+						return false
+					}
+					newInt8Value = int8(vv)
+					newValue := reflect.ValueOf(&newInt8Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*int16" {
+					var newInt16Value int16
+					if isOverflowInt(newInt16Value, int64(vv)) {
+						return false
+					}
+					newInt16Value = int16(vv)
+					newValue := reflect.ValueOf(&newInt16Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*int32" {
+					var newInt32Value int32
+					if isOverflowInt(newInt32Value, int64(vv)) {
+						return false
+					}
+					newInt32Value = int32(vv)
+					newValue := reflect.ValueOf(&newInt32Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*int64" {
+					var newInt64Value int64
+					if isOverflowInt(newInt64Value, int64(vv)) {
+						return false
+					}
+					newInt64Value = int64(vv)
 					newValue := reflect.ValueOf(&newInt64Value)
 					fieldValue.Set(newValue)
 					return true
 				}
 			}
+
 		}
+
+	}
+
+	return false
+}
+
+// UintUpdater update int (any int type Uint8, Uint16, Uint32, Uint64 and whether its a pointer or a value)
+func UintUpdater(fieldValue reflect.Value, v reflect.Value) bool {
+	// check for underflow first
+	switch v.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		if v.Int() < 0 {
+			return false
+		}
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		if v.Uint() < 0 {
+			return false
+		}
+	case reflect.Float32, reflect.Float64:
+		if v.Float() < 0 {
+			return false
+		}
+	}
+
+	switch fieldValue.Kind() {
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		switch v.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			if fieldValue.OverflowUint(uint64(v.Int())) {
+				return false
+			}
+			fieldValue.SetUint(uint64(v.Int()))
+			return true
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			if fieldValue.OverflowUint(v.Uint()) {
+				return false
+			}
+			fieldValue.SetUint(v.Uint())
+			return true
+		case reflect.Float32, reflect.Float64:
+			if fieldValue.OverflowUint(uint64(v.Float())) {
+				return false
+			}
+			fieldValue.SetUint(uint64(v.Float()))
+			return true
+		}
+
+	case reflect.Ptr:
+
+		if !v.IsValid() {
+			if fieldValue.Type().String() == "*uint" {
+				var newNullUint *uint
+				newValue := reflect.ValueOf(newNullUint)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*uint8" {
+				var newNullUint8 *uint8
+				newValue := reflect.ValueOf(newNullUint8)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*uint16" {
+				var newNullUint16 *uint16
+				newValue := reflect.ValueOf(newNullUint16)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*uint32" {
+				var newNullUint32 *uint32
+				newValue := reflect.ValueOf(newNullUint32)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*uint64" {
+				var newNullUint64 *uint64
+				newValue := reflect.ValueOf(newNullUint64)
+				fieldValue.Set(newValue)
+				return true
+			}
+		} else {
+
+			switch v.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				vv := v.Int()
+
+				if fieldValue.Type().String() == "*uint" {
+					var newUintValue uint
+					if isOverflowUint(newUintValue, uint64(vv)) {
+						return false
+					}
+					newUintValue = uint(vv)
+					newValue := reflect.ValueOf(&newUintValue)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint8" {
+					var newUint8Value uint8
+					if isOverflowUint(newUint8Value, uint64(vv)) {
+						return false
+					}
+					newUint8Value = uint8(vv)
+					newValue := reflect.ValueOf(&newUint8Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint16" {
+					var newUint16Value uint16
+					if isOverflowUint(newUint16Value, uint64(vv)) {
+						return false
+					}
+					newUint16Value = uint16(vv)
+					newValue := reflect.ValueOf(&newUint16Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint32" {
+					var newUint32Value uint32
+					if isOverflowUint(newUint32Value, uint64(vv)) {
+						return false
+					}
+					newUint32Value = uint32(vv)
+					newValue := reflect.ValueOf(&newUint32Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint64" {
+					var newUint64Value uint64
+					if isOverflowUint(newUint64Value, uint64(vv)) {
+						return false
+					}
+					newUint64Value = uint64(vv)
+					newValue := reflect.ValueOf(&newUint64Value)
+					fieldValue.Set(newValue)
+					return true
+				}
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				vv := v.Uint()
+
+				if fieldValue.Type().String() == "*uint" {
+					var newUintValue uint
+					if isOverflowUint(newUintValue, vv) {
+						return false
+					}
+					newUintValue = uint(vv)
+					newValue := reflect.ValueOf(&newUintValue)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint8" {
+					var newUint8Value uint8
+					if isOverflowUint(newUint8Value, vv) {
+						return false
+					}
+					newUint8Value = uint8(vv)
+					newValue := reflect.ValueOf(&newUint8Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint16" {
+					var newUint16Value uint16
+					if isOverflowUint(newUint16Value, vv) {
+						return false
+					}
+					newUint16Value = uint16(vv)
+					newValue := reflect.ValueOf(&newUint16Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint32" {
+					var newUint32Value uint32
+					if isOverflowUint(newUint32Value, vv) {
+						return false
+					}
+					newUint32Value = uint32(vv)
+					newValue := reflect.ValueOf(&newUint32Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint64" {
+					var newUint64Value uint64
+					if isOverflowUint(newUint64Value, vv) {
+						return false
+					}
+					newUint64Value = vv
+					newValue := reflect.ValueOf(&newUint64Value)
+					fieldValue.Set(newValue)
+					return true
+				}
+			case reflect.Float32, reflect.Float64:
+				vv := v.Float()
+
+				if fieldValue.Type().String() == "*uint" {
+					var newUintValue uint
+					if isOverflowUint(newUintValue, uint64(vv)) {
+						return false
+					}
+					newUintValue = uint(vv)
+					newValue := reflect.ValueOf(&newUintValue)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint8" {
+					var newUint8Value uint8
+					if isOverflowUint(newUint8Value, uint64(vv)) {
+						return false
+					}
+					newUint8Value = uint8(vv)
+					newValue := reflect.ValueOf(&newUint8Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint16" {
+					var newUint16Value uint16
+					if isOverflowUint(newUint16Value, uint64(vv)) {
+						return false
+					}
+					newUint16Value = uint16(vv)
+					newValue := reflect.ValueOf(&newUint16Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint32" {
+					var newUint32Value uint32
+					if isOverflowUint(newUint32Value, uint64(vv)) {
+						return false
+					}
+					newUint32Value = uint32(vv)
+					newValue := reflect.ValueOf(&newUint32Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*uint64" {
+					var newUint64Value uint64
+					if isOverflowUint(newUint64Value, uint64(vv)) {
+						return false
+					}
+					newUint64Value = uint64(vv)
+					newValue := reflect.ValueOf(&newUint64Value)
+					fieldValue.Set(newValue)
+					return true
+				}
+			}
+
+		}
+
 	}
 
 	return false
@@ -292,68 +615,122 @@ func IntUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 
 // FloatUpdater update int (any float type Float8, Float16, Float32, Float64 and whether its a pointer or a value)
 func FloatUpdater(fieldValue reflect.Value, v reflect.Value) bool {
-	if fieldValue.Kind() == reflect.Float32 ||
-		fieldValue.Kind() == reflect.Float64 {
+	switch fieldValue.Kind() {
+	case reflect.Float32, reflect.Float64:
 
-		if v.Kind() == reflect.Int ||
-			v.Kind() == reflect.Int8 ||
-			v.Kind() == reflect.Int16 ||
-			v.Kind() == reflect.Int32 ||
-			v.Kind() == reflect.Int64 {
+		switch v.Kind() {
+		case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+			if fieldValue.OverflowFloat(float64(v.Int())) {
+				return false
+			}
 			fieldValue.SetFloat(float64(v.Int()))
 			return true
-		} else if v.Kind() == reflect.Float32 ||
-			v.Kind() == reflect.Float64 {
+		case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+			if fieldValue.OverflowFloat(float64(v.Uint())) {
+				return false
+			}
+			fieldValue.SetFloat(float64(v.Uint()))
+			return true
+		case reflect.Float32, reflect.Float64:
+			if fieldValue.OverflowFloat(v.Float()) {
+				return false
+			}
 			fieldValue.SetFloat(v.Float())
 			return true
 		}
-	} else if fieldValue.Kind() == reflect.Ptr {
+
+	case reflect.Ptr:
+
 		// only process if field is pointer to any float
-		if fieldValue.Type().String() == "*float32" ||
-			fieldValue.Type().String() == "*float64" {
-			if !v.IsValid() {
+		if fieldValue.Type().String() != "*float32" && fieldValue.Type().String() != "*float64" {
+			return false
+		}
+
+		if !v.IsValid() {
+			if fieldValue.Type().String() == "*float32" {
+				var newFloat32Value *float32
+				newValue := reflect.ValueOf(newFloat32Value)
+				fieldValue.Set(newValue)
+				return true
+			} else if fieldValue.Type().String() == "*float64" {
+				var newFloat64Value *float64
+				newValue := reflect.ValueOf(newFloat64Value)
+				fieldValue.Set(newValue)
+				return true
+			}
+		} else {
+
+			switch v.Kind() {
+			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+				vv := v.Int()
+
 				if fieldValue.Type().String() == "*float32" {
-					var newFloat32Value *float32
-					newValue := reflect.ValueOf(newFloat32Value)
-					fieldValue.Set(newValue)
-					return true
-				} else if fieldValue.Type().String() == "*float64" {
-					var newFloat64Value *float64
-					newValue := reflect.ValueOf(newFloat64Value)
-					fieldValue.Set(newValue)
-					return true
-				}
-			} else if v.Kind() == reflect.Int ||
-				v.Kind() == reflect.Int8 ||
-				v.Kind() == reflect.Int16 ||
-				v.Kind() == reflect.Int32 ||
-				v.Kind() == reflect.Int64 {
-				if fieldValue.Type().String() == "*float32" {
-					newFloat32Value := float32(v.Int())
+					var newFloat32Value float32
+					if isOverflowFloat(newFloat32Value, float64(vv)) {
+						return false
+					}
+					newFloat32Value = float32(vv)
 					newValue := reflect.ValueOf(&newFloat32Value)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*float64" {
-					newFloat64Value := float64(v.Int())
+					var newFloat64Value float64
+					if isOverflowFloat(newFloat64Value, float64(vv)) {
+						return false
+					}
+					newFloat64Value = float64(vv)
 					newValue := reflect.ValueOf(&newFloat64Value)
 					fieldValue.Set(newValue)
 					return true
 				}
-			} else if v.Kind() == reflect.Float32 ||
-				v.Kind() == reflect.Float64 {
+			case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+				vv := v.Uint()
+
 				if fieldValue.Type().String() == "*float32" {
-					newFloat32Value := float32(v.Float())
+					var newFloat32Value float32
+					if isOverflowFloat(newFloat32Value, float64(vv)) {
+						return false
+					}
+					newFloat32Value = float32(vv)
 					newValue := reflect.ValueOf(&newFloat32Value)
 					fieldValue.Set(newValue)
 					return true
 				} else if fieldValue.Type().String() == "*float64" {
-					newFloat64Value := v.Float()
+					var newFloat64Value float64
+					if isOverflowFloat(newFloat64Value, float64(vv)) {
+						return false
+					}
+					newFloat64Value = float64(vv)
+					newValue := reflect.ValueOf(&newFloat64Value)
+					fieldValue.Set(newValue)
+					return true
+				}
+			case reflect.Float32, reflect.Float64:
+				vv := v.Float()
+
+				if fieldValue.Type().String() == "*float32" {
+					var newFloat32Value float32
+					if isOverflowFloat(newFloat32Value, vv) {
+						return false
+					}
+					newFloat32Value = float32(vv)
+					newValue := reflect.ValueOf(&newFloat32Value)
+					fieldValue.Set(newValue)
+					return true
+				} else if fieldValue.Type().String() == "*float64" {
+					var newFloat64Value float64
+					if isOverflowFloat(newFloat64Value, vv) {
+						return false
+					}
+					newFloat64Value = vv
 					newValue := reflect.ValueOf(&newFloat64Value)
 					fieldValue.Set(newValue)
 					return true
 				}
 			}
+
 		}
+
 	}
 
 	return false
@@ -366,8 +743,17 @@ func TimeUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 		if !v.IsValid() {
 			return false
 		}
-		// only set if underlying type is string
-		if v.Kind() == reflect.String {
+
+		switch v.Kind() {
+		case reflect.Int64:
+			t := time.Unix(v.Int(), 0)
+			fieldValue.Set(reflect.ValueOf(t))
+			return true
+		case reflect.Float64:
+			t := time.Unix(int64(v.Float()), 0)
+			fieldValue.Set(reflect.ValueOf(t))
+			return true
+		case reflect.String:
 			t := time.Now()
 			// make sure date format is correct
 			if err := t.UnmarshalJSON([]byte(`"` + v.String() + `"`)); err == nil {
@@ -383,8 +769,17 @@ func TimeUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 			fieldValue.Set(newValue)
 			return true
 		}
-		// only set if underlying type is string
-		if v.Kind() == reflect.String {
+
+		switch v.Kind() {
+		case reflect.Int64:
+			t := time.Unix(v.Int(), 0)
+			fieldValue.Set(reflect.ValueOf(&t))
+			return true
+		case reflect.Float64:
+			t := time.Unix(int64(v.Float()), 0)
+			fieldValue.Set(reflect.ValueOf(&t))
+			return true
+		case reflect.String:
 			t := time.Now()
 			// make sure date format is correct
 			if err := t.UnmarshalJSON([]byte(`"` + v.String() + `"`)); err == nil {
@@ -398,8 +793,20 @@ func TimeUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 	return false
 }
 
-// Updaters collection of all type updaters
-var Updaters = []func(reflect.Value, reflect.Value) bool{
+func isOverflowUint(field interface{}, value uint64) bool {
+	return reflect.ValueOf(field).OverflowUint(value)
+}
+
+func isOverflowInt(field interface{}, value int64) bool {
+	return reflect.ValueOf(field).OverflowInt(value)
+}
+
+func isOverflowFloat(field interface{}, value float64) bool {
+	return reflect.ValueOf(field).OverflowFloat(value)
+}
+
+// AllUpdaters is a collection of all type updaters
+var AllUpdaters = []func(reflect.Value, reflect.Value) bool{
 	NullStringUpdater,
 	NullFloatUpdater,
 	NullIntUpdater,
@@ -407,6 +814,16 @@ var Updaters = []func(reflect.Value, reflect.Value) bool{
 	NullTimeUpdater,
 	MapStringInterfaceUpdater,
 	IntUpdater,
+	UintUpdater,
+	FloatUpdater,
+	TimeUpdater,
+	BoolUpdater,
+}
+
+// Updaters is a collection of standard type updaters
+var Updaters = []func(reflect.Value, reflect.Value) bool{
+	IntUpdater,
+	UintUpdater,
 	FloatUpdater,
 	TimeUpdater,
 	BoolUpdater,
