@@ -1,10 +1,11 @@
 package gopartial
 
 import (
-	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 
 	"github.com/guregu/null"
 )
@@ -13,6 +14,8 @@ type sub struct {
 	FieldA string `json:"fielda"`
 	FieldB string `json:"fieldb"`
 }
+
+type sliceAlias []string
 
 type destination struct {
 	Field0   string      `json:"field0" props:"readonly"`
@@ -38,6 +41,7 @@ type destination struct {
 	Field13  int8        `json:"field13"`
 	Field14  []string    `json:"field14"`
 	Field15  []int       `json:"field15"`
+	Field16  sliceAlias  `json:"field16"`
 }
 
 func TestPartialUpdate(t *testing.T) {
@@ -1289,6 +1293,23 @@ func TestPartialUpdate(t *testing.T) {
 				skipConditions: SkipConditions,
 			},
 			want:    []string{"Field15"},
+			wantErr: false,
+		},
+		test{
+			name: "Update slice alias",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field16": []interface{}{
+						"asd",
+						"fgh",
+					},
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{"Field16"},
 			wantErr: false,
 		},
 	}
