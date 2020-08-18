@@ -170,6 +170,38 @@ func BoolUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 	return false
 }
 
+func SliceUpdater(fieldValue reflect.Value, v reflect.Value) bool {
+	if fieldValue.Type() ==  reflect.TypeOf([]string{}) && fieldValue.Kind() == reflect.Slice {
+		nval := reflect.MakeSlice(fieldValue.Type(), v.Len(), v.Cap())
+		for i := 0; i < v.Len(); i++ {
+			el := v.Index(i)
+			if v.Index(i).Kind() == reflect.Ptr || v.Index(i).Kind() == reflect.Interface {
+				el = el.Elem()
+			}
+			nval.Index(i).SetString(el.String())
+		}
+
+		fieldValue.Set(nval)
+		return true
+	}
+
+	if fieldValue.Type() ==  reflect.TypeOf([]int{}) && fieldValue.Kind() == reflect.Slice {
+		nval := reflect.MakeSlice(fieldValue.Type(), v.Len(), v.Cap())
+		for i := 0; i < v.Len(); i++ {
+			el := v.Index(i)
+			if v.Index(i).Kind() == reflect.Ptr || v.Index(i).Kind() == reflect.Interface {
+				el = el.Elem()
+			}
+			nval.Index(i).SetInt(el.Int())
+		}
+
+		fieldValue.Set(nval)
+		return true
+	}
+
+	return false
+}
+
 // IntUpdater update int (any int type Int8, Int16, Int32, Int64 and whether its a pointer or a value)
 func IntUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 	switch fieldValue.Kind() {
