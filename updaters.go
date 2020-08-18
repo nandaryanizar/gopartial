@@ -171,28 +171,27 @@ func BoolUpdater(fieldValue reflect.Value, v reflect.Value) bool {
 }
 
 func SliceUpdater(fieldValue reflect.Value, v reflect.Value) bool {
-	if fieldValue.Type() ==  reflect.TypeOf([]string{}) && fieldValue.Kind() == reflect.Slice {
+	if fieldValue.Kind() == reflect.Slice {
 		nval := reflect.MakeSlice(fieldValue.Type(), v.Len(), v.Cap())
 		for i := 0; i < v.Len(); i++ {
 			el := v.Index(i)
-			if v.Index(i).Kind() == reflect.Ptr || v.Index(i).Kind() == reflect.Interface {
+			if el.Kind() == reflect.Ptr || el.Kind() == reflect.Interface {
 				el = el.Elem()
 			}
-			nval.Index(i).SetString(el.String())
-		}
 
-		fieldValue.Set(nval)
-		return true
-	}
-
-	if fieldValue.Type() ==  reflect.TypeOf([]int{}) && fieldValue.Kind() == reflect.Slice {
-		nval := reflect.MakeSlice(fieldValue.Type(), v.Len(), v.Cap())
-		for i := 0; i < v.Len(); i++ {
-			el := v.Index(i)
-			if v.Index(i).Kind() == reflect.Ptr || v.Index(i).Kind() == reflect.Interface {
-				el = el.Elem()
+			if nval.Index(i).Kind() == el.Kind() {
+				nval.Index(i).Set(el)
+			} else {
+				// go through all extended process types
+				var updateSuccess bool
+				for _, updater := range Updaters {
+					updateSuccess = updater(nval.Index(i), el)
+					if updateSuccess {
+						// the first updateSuccess found, break the loop
+						break
+					}
+				}
 			}
-			nval.Index(i).SetInt(el.Int())
 		}
 
 		fieldValue.Set(nval)
