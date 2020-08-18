@@ -63,8 +63,12 @@ func PartialUpdate(dest interface{}, partial map[string]interface{}, tagName str
 			v := reflect.ValueOf(val)
 			updateSuccess := false
 
-			// easily assign the value if both end's kinds are the same
-			if valueOfDest.Field(i).Kind() == v.Kind() {
+			if valueOfDest.Field(i).Kind() == reflect.Slice {
+				updateSuccess = SliceUpdater(valueOfDest.Field(i), v)
+				if updateSuccess {
+					updateSuccess = true
+				}
+			} else if valueOfDest.Field(i).Kind() == v.Kind() {
 				valueOfDest.Field(i).Set(v)
 				updateSuccess = true
 			} else {

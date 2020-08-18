@@ -1,12 +1,44 @@
 package gopartial
 
 import (
+	"github.com/stretchr/testify/require"
 	"reflect"
 	"testing"
 	"time"
 
 	"github.com/guregu/null"
 )
+
+type sub struct {
+	FieldA string `json:"fielda"`
+	FieldB string `json:"fieldb"`
+}
+
+type destination struct {
+	Field0   string      `json:"field0" props:"readonly"`
+	Field1   string      `json:"field1"`
+	Field1p  *string     `json:"field1p"`
+	Field2   null.String `json:"field2"`
+	Field3   float64     `json:"field3"`
+	Field3p  *float64    `json:"field3p"`
+	Field4   null.Float  `json:"field4"`
+	Field5   int         `json:"field5"`
+	Field5p  *int        `json:"field5p"`
+	Field6   null.Int    `json:"field6"`
+	Field7   bool        `json:"field7"`
+	Field7p  *bool       `json:"field7p"`
+	Field8   null.Bool   `json:"field8"`
+	Field9   time.Time   `json:"field9"`
+	Field9p  *time.Time  `json:"field9p"`
+	Field10  null.Time   `json:"field10"`
+	Field11  sub         `json:"field11"`
+	Field11p *sub        `json:"field11p"`
+	Field12  uint        `json:"field12"`
+	Field12p *uint       `json:"field12p"`
+	Field13  int8        `json:"field13"`
+	Field14  []string    `json:"field14"`
+	Field15  []int       `json:"field15"`
+}
 
 func TestPartialUpdate(t *testing.T) {
 	type args struct {
@@ -21,35 +53,6 @@ func TestPartialUpdate(t *testing.T) {
 		args    args
 		want    []string
 		wantErr bool
-	}
-
-	type sub struct {
-		FieldA string `json:"fielda"`
-		FieldB string `json:"fieldb"`
-	}
-
-	type destination struct {
-		Field0   string      `json:"field0" props:"readonly"`
-		Field1   string      `json:"field1"`
-		Field1p  *string     `json:"field1p"`
-		Field2   null.String `json:"field2"`
-		Field3   float64     `json:"field3"`
-		Field3p  *float64    `json:"field3p"`
-		Field4   null.Float  `json:"field4"`
-		Field5   int         `json:"field5"`
-		Field5p  *int        `json:"field5p"`
-		Field6   null.Int    `json:"field6"`
-		Field7   bool        `json:"field7"`
-		Field7p  *bool       `json:"field7p"`
-		Field8   null.Bool   `json:"field8"`
-		Field9   time.Time   `json:"field9"`
-		Field9p  *time.Time  `json:"field9p"`
-		Field10  null.Time   `json:"field10"`
-		Field11  sub         `json:"field11"`
-		Field11p *sub        `json:"field11p"`
-		Field12  uint        `json:"field12"`
-		Field12p *uint       `json:"field12p"`
-		Field13  int8        `json:"field13"`
 	}
 
 	var str = "foo"
@@ -1254,6 +1257,40 @@ func TestPartialUpdate(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 		},
+		test{
+			name: "Update slice string",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field14": []interface{}{
+						"abc",
+						"def",
+					},
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{"Field14"},
+			wantErr: false,
+		},
+		test{
+			name: "Update slice int",
+			args: args{
+				dest: &destination{},
+				partial: map[string]interface{}{
+					"field15": []interface{}{
+						1,
+						2,
+					},
+				},
+				tagName:        "json",
+				updaters:       Updaters,
+				skipConditions: SkipConditions,
+			},
+			want:    []string{"Field15"},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -1268,4 +1305,33 @@ func TestPartialUpdate(t *testing.T) {
 			}
 		})
 	}
+}
+
+//goos: linux
+//goarch: amd64
+//pkg: github.com/nandaryanizar/gopartial
+//BenchmarkPartialUpdate
+//BenchmarkPartialUpdate-8          210183              5051 ns/op             1000 B/op         51 allocs/op
+//PASS
+//ok      github.com/nandaryanizar/gopartial      1.124s
+func BenchmarkPartialUpdate(b *testing.B) {
+	dest := new(destination)
+	input := map[string]interface{}{
+		"field1":  "test",
+		"field5p": 1,
+		"field14": []interface{}{
+			"abc",
+			"def",
+		},
+		"field15": []interface{}{
+			1,
+			2,
+		},
+	}
+
+	for i := 0; i < b.N; i++ {
+		_, err := PartialUpdate(dest, input, "json", SkipConditions, Updaters)
+		require.NoError(b, err)
+	}
+
 }
