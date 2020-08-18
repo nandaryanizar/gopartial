@@ -1311,7 +1311,7 @@ func TestPartialUpdate(t *testing.T) {
 //goarch: amd64
 //pkg: github.com/nandaryanizar/gopartial
 //BenchmarkPartialUpdate
-//BenchmarkPartialUpdate-8          210183              5051 ns/op             824 B/op         51 allocs/op
+//BenchmarkPartialUpdate-8          210183              5051 ns/op             1000 B/op         51 allocs/op
 //PASS
 //ok      github.com/nandaryanizar/gopartial      1.124s
 func BenchmarkPartialUpdate(b *testing.B) {
